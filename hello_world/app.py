@@ -5,7 +5,7 @@ import os
 import boto3
 import uuid
 from pprint import pprint
-
+from get_random_bundle import get_random
 
 def post_item(event, context):
     print('WE start posting item')
@@ -58,8 +58,7 @@ def get_list(event, context):
     table = ddb.Table("hitinfo")
     response = table.scan()
     items = response["Items"]
-    for i in items:
-        print(i, "jopa")
+
     return {
         "statusCode": 200,
         "body": json.dumps(items, cls=DecimalEncoder),
@@ -69,3 +68,20 @@ def get_list(event, context):
             'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
         },
     }
+def random_bundle(event, context):
+    urlqs = event['queryStringParameters']
+    category =  urlqs.get('category')
+    n = int(urlqs.get('n'))
+    r = {}
+    if n and category:
+        r = get_random(category,n)
+
+    return {
+    "statusCode": 200,
+    "body": json.dumps(r,cls=DecimalEncoder),
+    'headers': {
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+    },
+}
