@@ -8,12 +8,12 @@ from pprint import pprint
 from get_random_bundle import get_random
 
 def post_item(event, context):
-    print('WE start posting item')
+    
     if event.get('body') and isinstance(event.get('body'), str):
         body = json.loads(event["body"])
     else: # we apparently in aws test
         body = event
-    pprint(f'event body I got is {body}')
+    
     if os.getenv("AWS_SAM_LOCAL"):
         ddb = boto3.resource(
             "dynamodb", endpoint_url="http://docker.for.mac.localhost:8000"
