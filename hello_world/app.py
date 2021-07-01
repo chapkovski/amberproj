@@ -1,19 +1,19 @@
 import json
-
+from decimal import Decimal
 # import requests
 import os
 import boto3
 import uuid
 from pprint import pprint
 from get_random_bundle import get_random
-
+hit_info_table = 'amberHits'
 def post_item(event, context):
-    
+    print('WE start posting item')
     if event.get('body') and isinstance(event.get('body'), str):
-        body = json.loads(event["body"])
+        body = json.loads(event["body"], parse_float=Decimal)
     else: # we apparently in aws test
         body = event
-    
+    pprint(f'event body I got is {body}')
     if os.getenv("AWS_SAM_LOCAL"):
         ddb = boto3.resource(
             "dynamodb", endpoint_url="http://docker.for.mac.localhost:8000"
@@ -21,7 +21,7 @@ def post_item(event, context):
 
     else:
         ddb = boto3.resource("dynamodb")
-    table = ddb.Table("hitinfo")
+    table = ddb.Table(hit_info_table)
     itemId = str(uuid.uuid4())
     new_item = table.put_item(Item={"itemId": itemId, **body})
     return {
@@ -55,7 +55,7 @@ def get_list(event, context):
 
     else:
         ddb = boto3.resource("dynamodb")
-    table = ddb.Table("hitinfo")
+    table = ddb.Table(hit_info_table)
     response = table.scan()
     items = response["Items"]
 

@@ -9,7 +9,7 @@ Description: >
 Parameters:
   TableName:
     Type: String
-    Default: "hitinfo"
+    Default: "amberHits"
     Description: (Required) The name of the new DynamoDB table you want to create and save to. Minimum 3 characters
     MinLength: 3
     MaxLength: 50
