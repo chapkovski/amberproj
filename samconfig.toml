@@ -8,4 +8,4 @@ s3_prefix = "amber-app"
 region = "us-east-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "TableName=\"hitinfo\""
+parameter_overrides = "TableName=\"amberHits\""

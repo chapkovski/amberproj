@@ -1,19 +1,23 @@
 import json
 from decimal import Decimal
+
 # import requests
 import os
 import boto3
 import uuid
 from pprint import pprint
 from get_random_bundle import get_random
-hit_info_table = 'amberHits'
+
+hit_info_table = "amberHits"
+
+
 def post_item(event, context):
-    print('WE start posting item')
-    if event.get('body') and isinstance(event.get('body'), str):
+    print("WE start posting item")
+    if event.get("body") and isinstance(event.get("body"), str):
         body = json.loads(event["body"], parse_float=Decimal)
-    else: # we apparently in aws test
+    else:  # we apparently in aws test
         body = event
-    pprint(f'event body I got is {body}')
+    pprint(f"event body I got is {body}")
     if os.getenv("AWS_SAM_LOCAL"):
         ddb = boto3.resource(
             "dynamodb", endpoint_url="http://docker.for.mac.localhost:8000"
@@ -23,15 +27,18 @@ def post_item(event, context):
         ddb = boto3.resource("dynamodb")
     table = ddb.Table(hit_info_table)
     itemId = str(uuid.uuid4())
+    independent = body.get("independent", False)
+    if independent:
+        body["generation"] = 0
     new_item = table.put_item(Item={"itemId": itemId, **body})
     return {
         "statusCode": 200,
         "body": json.dumps(new_item),
-        'headers': {
-            'Access-Control-Allow-Headers': '*',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
-            'Content-Type': 'application/json',
+        "headers": {
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+            "Content-Type": "application/json",
         },
     }
 
@@ -47,7 +54,7 @@ class DecimalEncoder(json.JSONEncoder):
 
 
 def get_list(event, context):
-    pprint('I am trying to get a list of all objects in hitinfo db...')
+    pprint("I am trying to get a list of all objects in hitinfo db...")
     if os.getenv("AWS_SAM_LOCAL"):
         ddb = boto3.resource(
             "dynamodb", endpoint_url="http://docker.for.mac.localhost:8000"
@@ -62,26 +69,28 @@ def get_list(event, context):
     return {
         "statusCode": 200,
         "body": json.dumps(items, cls=DecimalEncoder),
-        'headers': {
-            'Access-Control-Allow-Headers': 'Content-Type',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+        "headers": {
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
         },
     }
+
+
 def random_bundle(event, context):
-    urlqs = event['queryStringParameters']
-    category =  urlqs.get('category')
-    n = int(urlqs.get('n'))
+    urlqs = event["queryStringParameters"]
+    category = urlqs.get("category")
+    n = int(urlqs.get("n"))
     r = {}
     if n and category:
-        r = get_random(category,n)
+        r = get_random(category, n)
 
     return {
-    "statusCode": 200,
-    "body": json.dumps(r,cls=DecimalEncoder),
-    'headers': {
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
-    },
-}
+        "statusCode": 200,
+        "body": json.dumps(r, cls=DecimalEncoder),
+        "headers": {
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+        },
+    }
