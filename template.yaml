@@ -61,6 +61,12 @@ Resources:
       AttributeDefinitions:
         - AttributeName: itemId
           AttributeType: S
+        - AttributeName: category
+          AttributeType: S
+        - AttributeName: persona_id
+          AttributeType: N
+        - AttributeName: generation
+          AttributeType: N
 
       KeySchema:
         - AttributeName: itemId

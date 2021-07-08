@@ -8,7 +8,7 @@ import uuid
 from pprint import pprint
 from get_random_bundle import get_random
 
-hit_info_table = "amberHits"
+hit_info_table = "generationalData"
 
 
 def post_item(event, context):
@@ -49,7 +49,7 @@ from decimal import Decimal
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Decimal):
-            return int(obj)
+            return float(obj)
         return json.JSONEncoder.default(self, obj)
 
 
