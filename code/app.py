@@ -50,8 +50,10 @@ def post_item(event, context):
         ddb = boto3.resource("dynamodb")
     table = ddb.Table(hit_info_table)
     itemId = str(uuid.uuid4())
+    print('GONNA POST NEW ITEM TO DDB:', itemId)
     independent = body.get("independent", False)
-    if independent:
+    generation = body.get("generation", None)
+    if independent and not generation:
         body["generation"] = 0
     new_item = table.put_item(Item={"itemId": itemId, **body})
     return {

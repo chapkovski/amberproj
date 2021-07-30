@@ -26,17 +26,17 @@ Globals:
       AllowOrigin: "'*'"
 
 Resources:
-  RandomGeneratoFun:
+  RandomGeneratorFun:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: hello_world/
+      CodeUri: code/
       Handler: app.random_bundle
       Runtime: python3.8
       Policies:
         - DynamoDBCrudPolicy:
             TableName: "raw"
       Events:
-        HelloWorld:
+        RandomGeneratorRequest:
           Type: Api
           Properties:
             Path: /random
@@ -44,7 +44,7 @@ Resources:
   GenerationalBundleGetter:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: hello_world/
+      CodeUri: code/
       Handler: random_generational_bundle.random_generational_response
       Runtime: python3.8
       Policies:
@@ -53,7 +53,7 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref HitDataTable
       Events:
-        HelloWorld:
+        GenerationalBundleRequest:
           Type: Api
           Properties:
             Path: /generational_bundle
@@ -61,14 +61,14 @@ Resources:
   PostItemsFun:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: hello_world/
+      CodeUri: code/
       Handler: app.post_item
       Runtime: python3.8
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref HitDataTable
       Events:
-        HelloWorld:
+        PostItem:
           Type: Api
           Properties:
             Path: /newitem
