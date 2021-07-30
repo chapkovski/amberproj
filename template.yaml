@@ -10,6 +10,9 @@ Parameters:
   HitDataTable:
     Type: String
     Default: "generationalData"
+  RawData:
+    Type: String
+    Default: "raw"
 
 Globals:
   Function:
@@ -37,6 +40,23 @@ Resources:
           Type: Api
           Properties:
             Path: /random
+            Method: GET
+  GenerationalBundleGetter:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello_world/
+      Handler: random_generational_bundle.random_generational_response
+      Runtime: python3.8
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RawData
+        - DynamoDBCrudPolicy:
+            TableName: !Ref HitDataTable
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /generational_bundle
             Method: GET
   PostItemsFun:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction

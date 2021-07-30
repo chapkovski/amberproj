@@ -8,6 +8,29 @@ import uuid
 from pprint import pprint
 from get_random_bundle import get_random
 
+from decimal import Decimal
+
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        return json.JSONEncoder.default(self, obj)
+
+
+def uresp(msg, status=200):
+    return {
+        "statusCode": status,
+        "body": json.dumps(msg, cls=DecimalEncoder),
+        "headers": {
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+            "Content-Type": 'application/json'
+        },
+    }
+
+
 hit_info_table = "generationalData"
 
 
@@ -41,16 +64,6 @@ def post_item(event, context):
             "Content-Type": "application/json",
         },
     }
-
-
-from decimal import Decimal
-
-
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Decimal):
-            return float(obj)
-        return json.JSONEncoder.default(self, obj)
 
 
 def get_list(event, context):
