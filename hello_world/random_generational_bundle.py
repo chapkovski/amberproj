@@ -25,8 +25,8 @@ def get_bundle_by_catper(category, persona_id, generation):
 def skus_by_gen(category, persona_id, generation, n):
     print("JOPA", category, persona_id, generation, n)
     candidates = get_bundle_by_catper(category, persona_id, generation)
-
-    nums = random.sample(candidates, n)
+    how_many = min(candidates, n)
+    nums = random.sample(candidates, how_many)
     res = [j for i in nums for j in i.get('shoppingCart')]
     random.shuffle(res)
     return res
